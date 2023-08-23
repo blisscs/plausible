@@ -44,7 +44,7 @@ defmodule Plausible.MixProject do
     [
       name: "plausible",
       links: %{"Github" => "https://github.com/blisscs/plausible"},
-      licenses: []
+      licenses: ["The Unlicense"]
     ]
   end
 end

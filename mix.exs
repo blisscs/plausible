@@ -7,7 +7,8 @@ defmodule Plausible.MixProject do
       version: "0.1.0",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
 
@@ -21,8 +22,12 @@ defmodule Plausible.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:finch, "~> 0.16.0"},
+      {:bypass, "~> 2.1.0", only: :test},
+      {:jason, "~> 1.0"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end

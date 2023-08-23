@@ -1,4 +1,28 @@
 defmodule Plausible do
+  @moduledoc """
+  ## Status
+
+  Currently the project is under development. All contributions are welcome.
+
+  ## V0.1.0 Roadmap
+
+  1. Add `__using__/1` macro to `Plausible` so to allow usages like
+
+  ```elixir
+    defmodule MyApp.Plausible do
+      use Plausible, finch: MyApp.Finch
+    end
+  ```
+
+  with this you can use `Plausible.create_event(opts)` instead of `Plausible.create_event/3`
+
+  2. Add documentation for `Plausible.FinchSupervisor` and the usage so the host app can create a finch process and the supervision
+  for the finch process on the app instead of under library supervision, which will help when in umbrella app case, where
+  two or more apps in the umbrella can have this library as dependency, but the finch processes will be spawn and supervised seperately
+  on host apps
+
+  """
+
   @doc """
   Create Plausible Event
 

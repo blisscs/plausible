@@ -4,7 +4,7 @@ defmodule Plausible.MixProject do
   def project do
     [
       app: :plausible,
-      version: "0.0.1",
+      version: "0.0.2",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -44,7 +44,7 @@ defmodule Plausible.MixProject do
     [
       name: "plausible",
       links: %{"Github" => "https://github.com/blisscs/plausible"},
-      licenses: ["The Unlicense"]
+      licenses: ["Unlicense"]
     ]
   end
 end

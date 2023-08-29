@@ -1,26 +1,40 @@
 defmodule Plausible do
   @moduledoc """
-  ## Status
+  `Plausible` is a library to push analytics event to [Plausible Analytics]("https://plausible.io").
+  The library provides two working mode to push events.
 
-  Currently the project is under development. All contributions are welcome.
+  ## Installation
 
-  ## V0.1.0 Roadmap
-
-  1. Add `__using__/1` macro to `Plausible` so to allow usages like
+  1. Add `:plausible` to your project `mix.exs` dependencies
 
   ```elixir
-    defmodule MyApp.Plausible do
-      use Plausible, finch: MyApp.Finch
+    def deps() do
+      [ #other dependendencies excluded here
+        {:plausible, "~> 0.1.0"}
+      ]
     end
   ```
 
-  with this you can use `Plausible.create_event(opts)` instead of `Plausible.create_event/3`
+  2. Initialize `finch` process in your app supervision tree.
 
-  2. Add documentation for `Plausible.FinchSupervisor` and the usage so the host app can create a finch process and the supervision
-  for the finch process on the app instead of under library supervision, which will help when in umbrella app case, where
-  two or more apps in the umbrella can have this library as dependency, but the finch processes will be spawn and supervised seperately
-  on host apps
+  ```elixir
+    def start(_type, _arg) do
+      children = [{Finch, name: MyApp.Finch}]
+    end
+  ```
 
+  ## Usages
+
+  The library provides two working modes as listed below
+
+  1. Use `Plausible.Client` as the wrapper to `Plausible` module so you can pass in less parameters.
+  2. Or use `Plausible` directly that accepts a finch process name and keyword `opts` parameter directly to send event to Plausible Analytics Host. 
+
+  The document can be found on each `Plausible` and `Plausible.Client`
+
+  ## Contributions
+
+  All contributions are welcome. Please visit https://github.com/blisscs/plausible and create issue or pull request there.
   """
 
   @doc """
@@ -30,10 +44,12 @@ defmodule Plausible do
 
   ## Examples
 
-      iex> create_event("https://plausible.io/api/event", MyApp.Finch, user_agent: user_agent, x_forwarded_for: x_forwarded_for, url: url, domain: domain)
+      iex> create_event(MyApp.Finch, user_agent: user_agent, x_forwarded_for: x_forwarded_for, url: url, domain: domain)
       :ok
   """
-  def create_event(endpoint \\ "https://plausible.io/api/event", finch_process, opts) do
+  def create_event(endpoint \\ "https://plausible.io", finch_process, opts) do
+    path = "/api/event"
+
     user_agent =
       opts[:user_agent] ||
         raise """
@@ -69,7 +85,7 @@ defmodule Plausible do
     %Finch.Response{status: 202} =
       Finch.build(
         :post,
-        endpoint,
+        "#{endpoint}#{path}",
         [
           {"User-Agent", user_agent},
           {"X-Forwarded-For", x_forwarded_for},

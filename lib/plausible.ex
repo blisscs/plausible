@@ -30,7 +30,7 @@ defmodule Plausible do
 
   ## Examples
 
-      iex> create_event("https://plausible.io/api/event", MyApp.Finch, user_agent: user_agent, x_forward_for: x_forwarded_for, url: url, domain: domain)
+      iex> create_event("https://plausible.io/api/event", MyApp.Finch, user_agent: user_agent, x_forwarded_for: x_forwarded_for, url: url, domain: domain)
       :ok
   """
   def create_event(endpoint \\ "https://plausible.io/api/event", finch_process, opts) do

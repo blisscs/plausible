@@ -1,13 +1,17 @@
-name: 'Deps Cache'
+name: Test
 
-on: push
+on: 
+  workflow_run:
+    workflows: ['PLT Cache','Deps Cache']
+    types:
+      - completed
 
 jobs:
-  deps_cache:
-    name: Prepare Deps Cache
+  test:
+    name: Test
     runs-on: ubuntu-latest
 
-    steps:
+  steps:
     - uses: actions/checkout@v3
 
     - name: Set up Elixir
@@ -16,6 +20,7 @@ jobs:
       with:
         elixir-version: '1.15.4' # [Required] Define the Elixir version
         otp-version: '26.0.2'      # [Required] Define the Erlang/OTP version
+
     - name: Restore Deps cache
       id: deps_cache
       uses: actions/cache/restore@v3
@@ -27,20 +32,6 @@ jobs:
         path: |
           deps
           _build
-
-    # Create Deps if no cache was found
-    - name: Create Deps
-      if: steps.deps_cache.outputs.cache-hit != 'true'
-      run: | 
-        mix deps.get
-        MIX_ENV=test mix compile
-        mix deps.compile
-    - name: Save Deps cache
-      uses: actions/cache/save@v3
-      if: steps.deps_cache.outputs.cache-hit != 'true'
-      with:
-        key: |
-          deps-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
-        path: |
-          deps
-          _build
+    - name: Test
+      run: |
+        mix test

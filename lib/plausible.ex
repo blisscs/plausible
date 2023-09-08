@@ -47,6 +47,8 @@ defmodule Plausible do
       iex> create_event(MyApp.Finch, user_agent: user_agent, x_forwarded_for: x_forwarded_for, url: url, domain: domain)
       :ok
   """
+  @spec create_event(String.t(), atom(), Keyword.t() | map) ::
+          :ok | {:error, Exception.t()} | {:error, Mint.Types.status(), binary()}
   def create_event(endpoint \\ "https://plausible.io", finch_process, opts) do
     path = "/api/event"
 
@@ -82,19 +84,39 @@ defmodule Plausible do
 
     # TODO handle custom properties
 
-    %Finch.Response{status: 202} =
-      Finch.build(
-        :post,
-        "#{endpoint}#{path}",
-        [
-          {"User-Agent", user_agent},
-          {"X-Forwarded-For", x_forwarded_for},
-          {"Content-Type", "application/json"}
-        ],
-        body
-      )
-      |> Finch.request!(finch_process)
-
-    :ok
+    Finch.build(
+      :post,
+      "#{endpoint}#{path}",
+      [
+        {"User-Agent", user_agent},
+        {"X-Forwarded-For", x_forwarded_for},
+        {"Content-Type", "application/json"}
+      ],
+      body
+    )
+    |> Finch.request(finch_process)
+    |> handle_request()
   end
+
+  @spec create_event!(String.t(), atom(), Keyword.t() | map()) :: :ok
+  def create_event!(endpoint \\ "https://plausible.io", finch_process, opts) do
+    create_event(endpoint, finch_process, opts)
+    |> case do
+      :ok ->
+        :ok
+
+      {:error, code, message} ->
+        raise Plausible.Exception, message: "status_code: #{code}, error: #{message}"
+
+      {:error, %Mint.TransportError{} = mint_error} ->
+        raise Plausible.Exception, message: to_string(mint_error.reason)
+    end
+  end
+
+  defp handle_request({:error, _} = error), do: error
+
+  defp handle_request({:ok, %Finch.Response{status: 202}}), do: :ok
+
+  defp handle_request({:ok, %Finch.Response{status: status, body: body}}),
+    do: {:error, status, body}
 end

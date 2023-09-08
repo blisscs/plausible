@@ -12,7 +12,11 @@ defmodule Plausible.MixProject do
       description: description(),
       package: package(),
       name: "Plausible Analytics",
-      source_url: "https://github.com/blisscs/plausible"
+      source_url: "https://github.com/blisscs/plausible",
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/plausible.plt"},
+        plt_core_path: "priv/plts/core.plt"
+      ]
     ]
   end
 
@@ -29,7 +33,9 @@ defmodule Plausible.MixProject do
       {:finch, "~> 0.16.0"},
       {:bypass, "~> 2.1.0", only: :test},
       {:jason, "~> 1.0"},
-      {:ex_doc, "~> 0.30.5", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.30.5", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 

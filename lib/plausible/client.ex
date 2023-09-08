@@ -17,7 +17,9 @@ defmodule Plausible.Client do
   2. Once module is defined can use `create_event/1` as below to send event to Plausible host.
 
   ```elixir
-  :ok = MyApp.Plausible.create_event(user_agent: user_agent, x_forwarded_for: x_forwarded_for, url: url, domain: domain)
+  MyApp.Plausible.create_event(user_agent: user_agent, x_forwarded_for: x_forwarded_for, url: url, domain: domain)
+
+  # returns `:ok` or `{:error, status_code, body}` or {:error, `Exception.t()`}
   ```
   """
   defmacro __using__(opts) do
@@ -27,6 +29,10 @@ defmodule Plausible.Client do
     quote do
       def create_event(opts) do
         Plausible.create_event(unquote(plausible_host_url), unquote(finch_pool_name), opts)
+      end
+
+      def create_event!(opts) do
+        Plausible.create_event!(unquote(plausible_host_url), unquote(finch_pool_name), opts)
       end
     end
   end

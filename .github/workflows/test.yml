@@ -11,27 +11,27 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
-  steps:
-  - uses: actions/checkout@v3
+    steps:
+    - uses: actions/checkout@v3
 
-  - name: Set up Elixir
-    id: beam
-    uses: erlef/setup-beam@v1
-    with:
-      elixir-version: '1.15.4' # [Required] Define the Elixir version
-      otp-version: '26.0.2'      # [Required] Define the Erlang/OTP version
+    - name: Set up Elixir
+      id: beam
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.15.4' # [Required] Define the Elixir version
+        otp-version: '26.0.2'      # [Required] Define the Erlang/OTP version
 
-  - name: Restore Deps cache
-    id: deps_cache
-    uses: actions/cache/restore@v3
-    with:
-      key: |
-        deps-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
-      restore-keys: |
-        deps-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
-      path: |
-        deps
-        _build
-  - name: Test
-    run: |
-      mix test
+    - name: Restore Deps cache
+      id: deps_cache
+      uses: actions/cache/restore@v3
+      with:
+        key: |
+          deps-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          deps-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
+        path: |
+          deps
+          _build
+    - name: Test
+      run: |
+        mix test

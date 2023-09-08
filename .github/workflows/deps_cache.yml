@@ -33,9 +33,8 @@ jobs:
       if: steps.deps_cache.outputs.cache-hit != 'true'
       run: | 
         mix deps.get
-	MIX_ENV=test mix compile
-	mix deps.compile
-
+        MIX_ENV=test mix compile
+        mix deps.compile
     - name: Save PLT cache
       uses: actions/cache/save@v3
       if: steps.deps_cache.outputs.cache-hit != 'true'

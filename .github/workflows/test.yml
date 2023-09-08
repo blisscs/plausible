@@ -139,6 +139,17 @@ jobs:
         path: |
           deps
           _build
+    - name: Restore Deps cache
+      id: deps_cache
+      uses: actions/cache/restore@v3
+      with:
+        key: |
+          deps-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          deps-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
+        path: |
+          deps
+          _build
     - name: Test
       run: |
         mix format --check-formatted
